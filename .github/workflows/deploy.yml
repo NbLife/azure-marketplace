@@ -40,7 +40,7 @@ jobs:
         run: |
           cd backend
           source venv/bin/activate
-          pytest
+          pytest backend/tests
 
   build-and-deploy:
     needs: test
