@@ -26,13 +26,14 @@ jobs:
           cd backend
           python -m venv venv
           source venv/bin/activate
+          pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest flake8
 
       - name: Run Linter
         run: |
           cd backend
           source venv/bin/activate
-          pip install flake8
           flake8 --max-line-length=120 --exclude=venv .
 
       - name: Run Tests
@@ -59,6 +60,7 @@ jobs:
           cd backend
           python -m venv venv
           source venv/bin/activate
+          pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Log in to Azure

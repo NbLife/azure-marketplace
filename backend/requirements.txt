@@ -3,3 +3,5 @@ uvicorn
 pymongo
 python-dotenv
 azure-storage-blob
+pytest  # <-- Dodaj tę linię!
+flake8  # <-- Dodaj tę linię, jeśli nie ma
