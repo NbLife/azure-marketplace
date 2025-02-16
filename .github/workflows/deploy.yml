@@ -33,7 +33,7 @@ jobs:
           cd backend
           source venv/bin/activate
           pip install flake8
-          flake8 --max-line-length=120 .
+          flake8 --max-line-length=120 --exclude=venv .
 
       - name: Run Tests
         run: |

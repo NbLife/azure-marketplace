@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from azure.storage.blob import BlobServiceClient
@@ -49,13 +49,16 @@ except Exception as e:
     print(f"Błąd połączenia z Azure Blob Storage: {str(e)}")
     raise HTTPException(status_code=500, detail="Błąd połączenia z Azure Storage")
 
+
 @app.get("/")
 def home():
     return {"message": "Marketplace API działa!"}
 
+
 @app.get("/api/status")
 def status():
     return {"status": "OK"}
+
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
@@ -65,6 +68,7 @@ async def upload_file(file: UploadFile = File(...)):
         return {"message": "Plik przesłany pomyślnie!", "file": file.filename}
     except Exception as e:
         return {"error": str(e)}
+
 
 @app.post("/items")
 async def create_item(name: str = Form(...), price: float = Form(...)):
