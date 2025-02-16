@@ -73,7 +73,8 @@ def get_product(product_id: str):
 
 @app.get("/search")
 def search_products(query: str):
-    results = [product for product in products_db if query.lower() in product.name.lower()]
+    results = [product for product in products_db if query.lower()
+               in product.name.lower()]
     return results
 
 
