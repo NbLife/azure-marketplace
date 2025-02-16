@@ -1,0 +1,37 @@
+# Ignorowanie środowiska wirtualnego
+venv/
+*.pyc
+__pycache__/
+
+# Ignorowanie plików konfiguracyjnych i kluczy
+.env
+*.env
+
+# Ignorowanie plików systemowych
+.DS_Store
+Thumbs.db
+
+# Ignorowanie plików związanych z logami
+logs/
+*.log
+*.out
+*.pid
+
+# Ignorowanie plików IDE
+.vscode/
+.idea/
+*.iml
+
+# Ignorowanie plików i katalogów związanych z Azure
+azure/
+.azure/
+*.azure-pipelines.yml
+
+# Ignorowanie plików związanych z zależnościami
+node_modules/
+*.lock
+
+# Ignorowanie buildów i paczek
+build/
+dist/
+*.egg-info/
