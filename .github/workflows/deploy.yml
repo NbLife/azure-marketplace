@@ -96,6 +96,13 @@ jobs:
           zip -r ../../frontend.zip .
 
 
+      - name: Create $web container if it doesn't exist
+        uses: azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az storage container create --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --account-key ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }} --name '$web' --public-access blob || true
+
       - name: Upload frontend to Azure Blob Storage
         uses: azure/CLI@v1
         with:
