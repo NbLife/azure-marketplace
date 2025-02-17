@@ -9,10 +9,6 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -77,6 +73,7 @@ jobs:
       - name: Zip backend for deployment
         run: |
           cd backend
+          rm -rf .pytest_cache .gitignore .env
           zip -r ../backend.zip .
 
       - name: Deploy Backend to Azure Web App
