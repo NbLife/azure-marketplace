@@ -2,7 +2,6 @@
   "name": "frontend",
   "version": "1.0.0",
   "description": "Frontend dla aplikacji marketplace",
-  "main": "index.js",
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build index.html"
