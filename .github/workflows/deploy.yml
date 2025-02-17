@@ -82,24 +82,29 @@ jobs:
           find . -type d -name "__pycache__" -exec rm -rf {} +
           echo "Cleanup done!"
 
-      - name: Archive backend for deployment
+      - name: **Archive backend for deployment (ZIP)**
         run: |
           cd backend
-          tar --exclude='.pytest_cache' --exclude='.gitignore' --exclude='.env' -czf ../backend.tar.gz .
+          zip -r ../backend.zip . -x ".pytest_cache/*" ".gitignore" ".env"
+          echo "Created backend.zip successfully"
+
+      - name: **Verify backend.zip exists**
+        run: |
+          ls -lh backend.zip || (echo "backend.zip not found!" && exit 1)
 
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: backend.tar.gz
+          package: backend.zip
 
       - name: Build frontend
         run: |
           cd frontend
           npm install
           npm run build
-          tar -czf ../frontend.tar.gz -C dist .
+          zip -r ../frontend.zip dist
 
       - name: Create $web container if it doesn't exist
         uses: azure/CLI@v1
