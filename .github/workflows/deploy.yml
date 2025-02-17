@@ -78,9 +78,6 @@ jobs:
         run: |
           cd backend
           rm -rf .pytest_cache .gitignore .env
-          find . -name ".pytest_cache" -type d -exec rm -rf {} +
-          find . -name ".gitignore" -type f -exec rm -f {} +
-          find . -name ".env" -type f -exec rm -f {} +
           zip -r ../backend.zip .
 
 
