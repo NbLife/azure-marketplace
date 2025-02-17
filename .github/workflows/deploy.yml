@@ -40,10 +40,9 @@ jobs:
       - name: Install dependencies & build backend
         run: |
           cd backend
-          python -m venv venv
+          python -m venv venv --clear
           source venv/bin/activate
-          echo "VIRTUAL_ENV=${PWD}/venv" >> $GITHUB_ENV
-          pip install --upgrade pip
+          pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
           ls -la venv/bin/
 
@@ -51,12 +50,19 @@ jobs:
         run: |
           if [ -f backend/venv/bin/python ]; then echo "venv/bin/python exists"; else echo "venv/bin/python is missing"; exit 1; fi
 
+      - name: Zip backend
+        run: |
+          cd backend
+          if [ -f ../backend.zip ]; then rm ../backend.zip; fi
+          zip -r ../backend.zip . || tar -cvf ../backend.tar.gz .
+          ls -la ../backend.*
+
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "frontend"
-          api_location: "backend"
+          app_location: "frontend/"
+          api_location: "backend/"
           output_location: "dist"
