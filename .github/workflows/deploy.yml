@@ -92,8 +92,9 @@ jobs:
           cd frontend
           npm install
           npm run build
-          cd build
+          cd dist
           zip -r ../../frontend.zip .
+
 
       - name: Upload frontend to Azure Blob Storage
         uses: azure/CLI@v1
