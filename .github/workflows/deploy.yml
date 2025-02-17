@@ -1,4 +1,4 @@
-name: Deploy to Azure Static Web Apps
+name: Deploy Frontend and Backend
 
 on:
   push:
@@ -10,22 +10,35 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  deploy-frontend:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Deploy to Azure Static Web Apps
-        id: deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "frontend"  # Katalog z kodem frontendu (np. React, Vue)
-          api_location: "backend"  # MUSI być funkcją Azure Functions
-          output_location: "frontend/dist"  # Folder zbudowanego frontendu (np. React)
+          app_location: "frontend"
+          output_location: "frontend/dist"
 
-      - name: Debug deployment
-        run: echo "Deployment status: ${{ steps.deploy.outcome }}"
+  deploy-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Backend to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: "twoja-nazwa-appki"
+          slot-name: "production"
+          package: "backend/"
