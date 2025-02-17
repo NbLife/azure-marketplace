@@ -66,6 +66,6 @@ jobs:
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: "my-marketplace-frontend"
+          app-name: "my-marketplace-api"
           slot-name: "production"
           package: "backend/"
