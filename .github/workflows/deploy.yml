@@ -59,12 +59,13 @@ jobs:
           python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements.txt || { echo "Error installing dependencies"; exit 1; }
+          if [ ! -f venv/bin/python ]; then echo "venv/bin/python is missing!"; exit 1; fi
           ls -la venv/bin/
 
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: "twoja-nazwa-appki"
+          app-name: "my-marketplace-frontend"
           slot-name: "production"
           package: "backend/"
