@@ -70,24 +70,20 @@ jobs:
           slot-name: "production"
           package: "backend/"
 
-  commit-backend-zip:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+commit-backend-zip:
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
-      - name: Create backend ZIP
-        run: |
-          cd backend
-          zip -r ../backend.zip . -x "venv/*" "__pycache__/*" ".env" ".git*" "*.pyc"
-          ls -lah ../backend.zip
+    - name: Create backend ZIP
+      run: |
+        cd backend
+        zip -r ../backend.zip . -x "venv/*" "__pycache__/*" ".env" ".git*" "*.pyc"
+        ls -lah ../backend.zip
 
-      - name: Push backend ZIP to GitHub
-        run: |
-          git config --global user.name "NbLife"
-          git config --global user.email "lifartlook@gmail.com"
-          git checkout -b backend-artifact
-          mv backend.zip backend-artifact.zip
-          git add backend-artifact.zip
-          git commit -m "Add backend artifact ZIP"
-          git push origin backend-artifact --force
+    - name: Upload backend ZIP as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: backend-artifact
+        path: backend.zip
