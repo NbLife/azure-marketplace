@@ -86,7 +86,6 @@ jobs:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: backend.zip
-          startup-command: "bash backend/startup.sh"
 
       - name: Build frontend
         run: |
