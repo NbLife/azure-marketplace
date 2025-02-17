@@ -77,10 +77,12 @@ jobs:
       - name: Zip backend for deployment
         run: |
           cd backend
-          find . -name ".pytest_cache" -exec rm -rf {} +
-          find . -name ".gitignore" -exec rm -f {} +
-          find . -name ".env" -exec rm -f {} +
+          rm -rf .pytest_cache .gitignore .env
+          find . -name ".pytest_cache" -type d -exec rm -rf {} +
+          find . -name ".gitignore" -type f -exec rm -f {} +
+          find . -name ".env" -type f -exec rm -f {} +
           zip -r ../backend.zip .
+
 
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
