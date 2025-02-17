@@ -63,9 +63,18 @@ jobs:
           if [ ! -f venv/bin/python ]; then echo "venv/bin/python is missing!"; exit 1; fi
           ls -la venv/bin/
 
+      - name: Prepare deployment package
+        run: |
+          cd backend
+          rm -rf venv  # Usuwamy katalog wirtualnego środowiska
+          echo "[config]\nSCM_DO_BUILD_DURING_DEPLOYMENT=true" > .deployment
+          zip -r backend.zip . -x "venv/*"
+
+      - name: Debug - check backend package
+        run: ls -lh backend/backend.zip
+
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: "my-marketplace-api"
-          slot-name: "production"
-          package: "backend/"
+          package: "backend/backend.zip"
