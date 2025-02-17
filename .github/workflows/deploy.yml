@@ -37,7 +37,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.8'
 
       - name: Install dependencies & build backend
         run: |
@@ -46,6 +46,12 @@ jobs:
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
+          ls -la venv/bin/
+
+      - name: Debug - check if venv/bin/python exists
+        run: |
+          echo "Checking if venv/bin/python exists..."
+          [ -f backend/venv/bin/python ] && echo "venv/bin/python exists" || echo "venv/bin/python is missing"
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
