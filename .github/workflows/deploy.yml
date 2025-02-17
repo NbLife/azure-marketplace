@@ -42,6 +42,7 @@ jobs:
           cd backend
           python -m venv venv
           source venv/bin/activate
+          echo "VIRTUAL_ENV=${PWD}/venv" >> $GITHUB_ENV
           pip install --upgrade pip
           pip install -r requirements.txt
           ls -la venv/bin/
