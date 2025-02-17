@@ -74,7 +74,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: **Cleanup unnecessary files before deployment**
+      - name: 
         run: |
           cd backend
           echo "Removing unnecessary files..."
@@ -84,7 +84,7 @@ jobs:
           find . -type f -name '.gitignore' -exec rm -f {} +
           ls -al  # Sprawdźmy, czy pliki na pewno zostały usunięte
 
-      - name: **Prepare backend for deployment**
+      - name: 
         run: |
           cd backend
           zip -r ../backend.zip . --exclude=venv/* --exclude=node_modules/* --exclude=.pytest_cache/* --exclude=.gitignore
@@ -96,7 +96,7 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: backend.zip
 
-      - name: **Set SCM_DO_BUILD_DURING_DEPLOYMENT to avoid Kudu Sync issues**
+      - name: 
         uses: azure/appservice-settings@v1
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
