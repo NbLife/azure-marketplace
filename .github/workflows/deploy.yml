@@ -95,7 +95,6 @@ jobs:
           cd dist
           zip -r ../../frontend.zip .
 
-
       - name: Create $web container if it doesn't exist
         uses: azure/CLI@v1
         with:
