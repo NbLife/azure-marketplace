@@ -74,12 +74,18 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Prepare backend for deployment
+      - name: Clean up unnecessary files before deployment
         run: |
           cd backend
           rm -rf .pytest_cache .gitignore .env
-          find . -name "__pycache__" -type d -exec rm -rf {} +
-          zip -r ../backend.zip .
+          find . -type d -name '__pycache__' -exec rm -rf {} +
+          find . -type d -name '.pytest_cache' -exec rm -rf {} +
+          find . -type f -name '.gitignore' -exec rm -f {} +
+
+      - name: Prepare backend for deployment
+        run: |
+          cd backend
+          zip -r ../backend.zip . --exclude=venv/* --exclude=node_modules/*
 
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
