@@ -70,11 +70,29 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+<<<<<<< HEAD
       - name: Zip backend for deployment
+=======
+      - name: **Cleanup unnecessary files before deployment**
+>>>>>>> 817e461 (Fix deployment issue by removing .pytest_cache and .gitignore)
         run: |
           cd backend
+          echo "Removing unnecessary files..."
           rm -rf .pytest_cache .gitignore .env
+<<<<<<< HEAD
           zip -r ../backend.zip .
+=======
+          find . -type d -name '__pycache__' -exec rm -rf {} +
+          find . -type d -name '.pytest_cache' -exec rm -rf {} +
+          find . -type f -name '.gitignore' -exec rm -f {} +
+          ls -al  # Sprawdźmy, czy pliki na pewno zostały usunięte
+
+      - name: **Prepare backend for deployment**
+        run: |
+          cd backend
+          zip -r ../backend.zip . --exclude=venv/* --exclude=node_modules/* --exclude=.pytest_cache/* --exclude=.gitignore
+
+>>>>>>> 817e461 (Fix deployment issue by removing .pytest_cache and .gitignore)
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
@@ -82,6 +100,27 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: backend.zip
 
+<<<<<<< HEAD
+=======
+      - name: **Set SCM_DO_BUILD_DURING_DEPLOYMENT to avoid Kudu Sync issues**
+        uses: azure/appservice-settings@v1
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          settings: |
+            [
+              {
+                "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+                "value": "true",
+                "slotSetting": false
+              }
+            ]
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+>>>>>>> 817e461 (Fix deployment issue by removing .pytest_cache and .gitignore)
       - name: Build frontend
         run: |
           cd frontend
