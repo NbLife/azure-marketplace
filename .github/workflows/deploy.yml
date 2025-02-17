@@ -44,7 +44,7 @@ jobs:
         run: |
           cd backend
           source venv/bin/activate
-          pytest tests || echo "No tests found, skipping..."
+          pytest tests --disable-warnings || echo "No tests found, skipping..."
 
   build-and-deploy:
     needs: test
@@ -84,7 +84,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: backend.zip
 
       - name: Build frontend
@@ -92,19 +91,11 @@ jobs:
           cd frontend
           npm install
           npm run build
-          cd dist
-          zip -r ../../frontend.zip .
-
-      - name: Create $web container if it doesn't exist
-        uses: azure/CLI@v1
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az storage container create --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --account-key ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }} --name '$web' --public-access blob || true
+          zip -r ../frontend.zip dist
 
       - name: Upload frontend to Azure Blob Storage
         uses: azure/CLI@v1
         with:
           azcliversion: latest
           inlineScript: |
-            az storage blob upload-batch --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --account-key ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }} --destination \$web --source frontend/dist --overwrite
+            az storage blob upload-batch --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --auth-mode login --destination \$web --source frontend/dist --overwrite
