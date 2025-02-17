@@ -26,13 +26,11 @@ jobs:
           cd frontend
           npm install
           npm run build
-          ls -la
           ls -la dist
 
       - name: Debug - check frontend dist
         run: |
-          echo "Checking if dist folder exists..."
-          [ -d frontend/dist ] && echo "dist folder exists" || echo "dist folder is missing"
+          if [ -d frontend/dist ]; then echo "dist folder exists"; else echo "dist folder is missing"; exit 1; fi
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -50,8 +48,7 @@ jobs:
 
       - name: Debug - check if venv/bin/python exists
         run: |
-          echo "Checking if venv/bin/python exists..."
-          [ -f backend/venv/bin/python ] && echo "venv/bin/python exists" || echo "venv/bin/python is missing"
+          if [ -f backend/venv/bin/python ]; then echo "venv/bin/python exists"; else echo "venv/bin/python is missing"; exit 1; fi
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
