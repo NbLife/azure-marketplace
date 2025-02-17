@@ -1,4 +1,4 @@
-name: Deploy to Azure (Frontend: Static Web Apps, Backend: App Service)
+name: Deploy to Azure Static Web Apps
 
 on:
   push:
@@ -9,97 +9,19 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
-  test-backend:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies
-        run: |
-          cd backend
-          python -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest flake8
-
-      - name: Run Linter
-        run: |
-          cd backend
-          source venv/bin/activate
-          flake8 --max-line-length=120 --exclude=venv .
-
-      - name: Run Tests
-        run: |
-          cd backend
-          source venv/bin/activate
-          pytest tests || echo "No tests found, skipping..."
-
-  build-and-deploy:
-    needs: test-backend
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # Frontend - Deploy to Azure Static Web Apps
-      - name: Deploy Frontend to Azure Static Web Apps
+      - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "frontend"
+          api_location: "backend"  # Musi zawierać Azure Functions
           output_location: "dist"
-
-      # Backend - Deploy to Azure Web App (App Service)
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies
-        run: |
-          cd backend
-          python -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Log in to Azure
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Clean unnecessary files before deployment
-        run: |
-          cd backend
-          rm -rf .pytest_cache __pycache__
-          find . -type f -name "*.pyc" -delete
-          find . -type d -name "__pycache__" -exec rm -rf {} +
-
-      - name: Zip backend for deployment
-        run: |
-          cd backend
-          zip -r ../backend.zip .
-
-      - name: Deploy Backend to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: backend.zip
