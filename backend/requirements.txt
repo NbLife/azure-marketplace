@@ -11,5 +11,5 @@ passlib[bcrypt]
 python-jose[cryptography]
 pyjwt
 pywin32==308; sys_platform == "win32"
-tensorflow==2.8.0
+tensorflow
 
