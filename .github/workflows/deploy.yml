@@ -63,18 +63,31 @@ jobs:
           if [ ! -f venv/bin/python ]; then echo "venv/bin/python is missing!"; exit 1; fi
           ls -la venv/bin/
 
-      - name: Prepare deployment package
-        run: |
-          cd backend
-          rm -rf venv  # Usuwamy katalog wirtualnego środowiska
-          echo "[config]\nSCM_DO_BUILD_DURING_DEPLOYMENT=true" > .deployment
-          zip -r backend.zip . -x "venv/*"
-
-      - name: Debug - check backend package
-        run: ls -lh backend/backend.zip
-
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: "my-marketplace-api"
-          package: "backend/backend.zip"
+          slot-name: "production"
+          package: "backend/"
+
+  commit-backend-zip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Create backend ZIP
+        run: |
+          cd backend
+          zip -r ../backend.zip . -x "venv/*" "__pycache__/*" ".env" ".git*" "*.pyc"
+          ls -lah ../backend.zip
+
+      - name: Push backend ZIP to GitHub
+        run: |
+          git config --global user.name "NbLife"
+          git config --global user.email "lifartlook@gmail.com"
+          git checkout -b backend-artifact
+          mv backend.zip backend-artifact.zip
+          git add backend-artifact.zip
+          git commit -m "Add backend artifact ZIP"
+          git push origin backend-artifact --force
