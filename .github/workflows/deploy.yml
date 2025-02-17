@@ -26,11 +26,9 @@ jobs:
           npm install
           npm run build
           ls -la dist
-
       - name: Debug - check frontend dist
         run: |
           if [ -d frontend/dist ]; then echo "dist folder exists"; else echo "dist folder is missing"; exit 1; fi
-
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
@@ -62,28 +60,17 @@ jobs:
           pip install -r requirements.txt || { echo "Error installing dependencies"; exit 1; }
           if [ ! -f venv/bin/python ]; then echo "venv/bin/python is missing!"; exit 1; fi
           ls -la venv/bin/
+      - name: Prepare deployment package
+        run: |
+          cd backend
+          rm -rf venv  # Usuwamy katalog wirtualnego środowiska
+          echo "[config]\nSCM_DO_BUILD_DURING_DEPLOYMENT=true" > .deployment
+          zip -r backend.zip . -x "venv/*"
+      - name: Debug - check backend package
+        run: ls -lh backend/backend.zip
 
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: "my-marketplace-api"
-          slot-name: "production"
-          package: "backend/"
-
-commit-backend-zip:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
-
-    - name: Create backend ZIP
-      run: |
-        cd backend
-        zip -r ../backend.zip . -x "venv/*" "__pycache__/*" ".env" ".git*" "*.pyc"
-        ls -lah ../backend.zip
-
-    - name: Upload backend ZIP as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: backend-artifact
-        path: backend.zip
+          package: "backend/backend.zip"
