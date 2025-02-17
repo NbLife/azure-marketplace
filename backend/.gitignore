@@ -22,8 +22,6 @@ logs/
 .idea/
 *.iml
 
-*.pytest_cache
-
 # Ignorowanie plików i katalogów związanych z Azure
 azure/
 .azure/

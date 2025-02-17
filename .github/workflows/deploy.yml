@@ -80,7 +80,7 @@ jobs:
           rm -rf .pytest_cache __pycache__
           find . -type f -name "*.pyc" -delete
           find . -type d -name "__pycache__" -exec rm -rf {} +
-          rm -f .gitignore .env
+          # .env and .gitignore are NOT removed anymore
 
       - name: Zip backend for deployment
         run: |
