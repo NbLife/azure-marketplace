@@ -53,6 +53,12 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Cleanup old deployment files
+        run: |
+          rm -rf backend/.venv
+          rm -rf backend/__pycache__
+          echo "Removed cached files before deployment"
+
       - name: Install dependencies & build backend
         run: |
           cd backend
@@ -63,9 +69,14 @@ jobs:
           if [ ! -f venv/bin/python ]; then echo "venv/bin/python is missing!"; exit 1; fi
           ls -la venv/bin/
 
+      - name: Package Backend for Deployment
+        run: |
+          cd backend
+          zip -r backend.zip . -x "*.git*" "*.venv*" "__pycache__/*"
+
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: "my-marketplace-api"
           slot-name: "production"
-          package: "backend/"
+          package: "backend/backend.zip"
