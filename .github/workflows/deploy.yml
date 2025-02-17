@@ -33,16 +33,19 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest flake8
+
       - name: Run Linter
         run: |
           cd backend
           source venv/bin/activate
           flake8 --max-line-length=120 --exclude=venv .
+
       - name: Run Tests
         run: |
           cd backend
           source venv/bin/activate
-          pytest tests || echo "No tests found, skipping..."
+          pytest tests --disable-warnings || echo "No tests found, skipping..."
+
   build-and-deploy:
     needs: test
     runs-on: ubuntu-latest
@@ -63,6 +66,7 @@ jobs:
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
+
       - name: Log in to Azure
         uses: azure/login@v1
         with:
@@ -70,18 +74,11 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-<<<<<<< HEAD
-      - name: Zip backend for deployment
-=======
       - name: **Cleanup unnecessary files before deployment**
->>>>>>> 817e461 (Fix deployment issue by removing .pytest_cache and .gitignore)
         run: |
           cd backend
           echo "Removing unnecessary files..."
           rm -rf .pytest_cache .gitignore .env
-<<<<<<< HEAD
-          zip -r ../backend.zip .
-=======
           find . -type d -name '__pycache__' -exec rm -rf {} +
           find . -type d -name '.pytest_cache' -exec rm -rf {} +
           find . -type f -name '.gitignore' -exec rm -f {} +
@@ -92,7 +89,6 @@ jobs:
           cd backend
           zip -r ../backend.zip . --exclude=venv/* --exclude=node_modules/* --exclude=.pytest_cache/* --exclude=.gitignore
 
->>>>>>> 817e461 (Fix deployment issue by removing .pytest_cache and .gitignore)
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
@@ -100,8 +96,6 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: backend.zip
 
-<<<<<<< HEAD
-=======
       - name: **Set SCM_DO_BUILD_DURING_DEPLOYMENT to avoid Kudu Sync issues**
         uses: azure/appservice-settings@v1
         with:
@@ -120,23 +114,16 @@ jobs:
         with:
           node-version: '20'
 
->>>>>>> 817e461 (Fix deployment issue by removing .pytest_cache and .gitignore)
       - name: Build frontend
         run: |
           cd frontend
-          npm install
+          npm ci
           npm run build
-          cd dist
-          zip -r ../../frontend.zip .
-      - name: Create $web container if it doesn't exist
-        uses: azure/CLI@v1
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az storage container create --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --account-key ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }} --name '$web' --public-access blob || true
+          zip -r ../frontend.zip dist
+
       - name: Upload frontend to Azure Blob Storage
         uses: azure/CLI@v1
         with:
           azcliversion: latest
           inlineScript: |
-            az storage blob upload-batch --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --account-key ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }} --destination \$web --source frontend/dist --overwrite
+            az storage blob upload-batch --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --auth-mode login --destination \$web --source frontend/dist --overwrite
