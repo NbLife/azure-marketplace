@@ -82,13 +82,13 @@ jobs:
           find . -type d -name "__pycache__" -exec rm -rf {} +
           echo "Cleanup done!"
 
-      - name: **Archive backend for deployment (ZIP)**
+      - name: 
         run: |
           cd backend
           zip -r ../backend.zip . -x ".pytest_cache/*" ".gitignore" ".env"
           echo "Created backend.zip successfully"
 
-      - name: **Verify backend.zip exists**
+      - name: 
         run: |
           ls -lh backend.zip || (echo "backend.zip not found!" && exit 1)
 
