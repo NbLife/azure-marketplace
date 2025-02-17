@@ -33,19 +33,16 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest flake8
-
       - name: Run Linter
         run: |
           cd backend
           source venv/bin/activate
           flake8 --max-line-length=120 --exclude=venv .
-
       - name: Run Tests
         run: |
           cd backend
           source venv/bin/activate
-          pytest tests --disable-warnings || echo "No tests found, skipping..."
-
+          pytest tests || echo "No tests found, skipping..."
   build-and-deploy:
     needs: test
     runs-on: ubuntu-latest
@@ -66,7 +63,6 @@ jobs:
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
-
       - name: Log in to Azure
         uses: azure/login@v1
         with:
@@ -74,19 +70,11 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Clean up unnecessary files before deployment
+      - name: Zip backend for deployment
         run: |
           cd backend
           rm -rf .pytest_cache .gitignore .env
-          find . -type d -name '__pycache__' -exec rm -rf {} +
-          find . -type d -name '.pytest_cache' -exec rm -rf {} +
-          find . -type f -name '.gitignore' -exec rm -f {} +
-
-      - name: Prepare backend for deployment
-        run: |
-          cd backend
-          zip -r ../backend.zip . --exclude=venv/* --exclude=node_modules/* --exclude=.pytest_cache/* --exclude=.gitignore
-
+          zip -r ../backend.zip .
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
@@ -94,21 +82,22 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: backend.zip
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
       - name: Build frontend
         run: |
           cd frontend
-          npm ci
+          npm install
           npm run build
-          zip -r ../frontend.zip dist
-
+          cd dist
+          zip -r ../../frontend.zip .
+      - name: Create $web container if it doesn't exist
+        uses: azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az storage container create --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --account-key ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }} --name '$web' --public-access blob || true
       - name: Upload frontend to Azure Blob Storage
         uses: azure/CLI@v1
         with:
           azcliversion: latest
           inlineScript: |
-            az storage blob upload-batch --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --auth-mode login --destination \$web --source frontend/dist --overwrite
+            az storage blob upload-batch --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --account-key ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }} --destination \$web --source frontend/dist --overwrite
