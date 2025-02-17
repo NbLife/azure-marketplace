@@ -101,4 +101,4 @@ jobs:
         with:
           azcliversion: latest
           inlineScript: |
-            az storage blob upload-batch --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --account-key ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }} --destination \$web --source frontend/build --overwrite
+            az storage blob upload-batch --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --account-key ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }} --destination \$web --source frontend/dist --overwrite
