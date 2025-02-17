@@ -40,20 +40,22 @@ jobs:
       - name: Install dependencies & build backend
         run: |
           cd backend
-          python -m venv venv --clear
+          rm -rf venv  # Usuwa stare venv
+          python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
+          chmod +x venv/bin/python  # Naprawia ewentualne błędy uprawnień
           ls -la venv/bin/
 
       - name: Debug - check if venv/bin/python exists
         run: |
           if [ -f backend/venv/bin/python ]; then echo "venv/bin/python exists"; else echo "venv/bin/python is missing"; exit 1; fi
 
-      - name: Zip backend
+      - name: Zip backend manually
         run: |
           cd backend
-          if [ -f ../backend.zip ]; then rm ../backend.zip; fi
+          rm -f ../backend.zip
           zip -r ../backend.zip . || tar -cvf ../backend.tar.gz .
           ls -la ../backend.*
 
@@ -63,6 +65,6 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "frontend/"
-          api_location: "backend/"
+          app_location: "frontend"
+          api_location: "backend"
           output_location: "dist"
