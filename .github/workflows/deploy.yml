@@ -1,4 +1,4 @@
-name: Deploy to Azure Web App1
+name: Deploy to Azure Web App
 
 on:
   push:
@@ -74,12 +74,17 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Clean unnecessary files before deployment
+        run: |
+          cd backend
+          rm -rf .pytest_cache __pycache__
+          find . -type f -name "*.pyc" -delete
+          find . -type d -name "__pycache__" -exec rm -rf {} +
+          rm -f .gitignore .env
+
       - name: Zip backend for deployment
         run: |
           cd backend
-          rm -rf .pytest_cache
-          rm -f .gitignore .env
-          find . -type d -name "__pycache__" -exec rm -rf {} +
           zip -r ../backend.zip .
 
       - name: Deploy Backend to Azure Web App
