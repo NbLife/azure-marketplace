@@ -74,44 +74,43 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Clean unnecessary files before deployment
+      - name: Remove unnecessary files before deployment
         run: |
           cd backend
           rm -rf .pytest_cache __pycache__
           find . -type f -name "*.pyc" -delete
           find . -type d -name "__pycache__" -exec rm -rf {} +
-          # .env and .gitignore are NOT removed anymore
+          echo "Cleanup done!"
 
-      - name: Zip backend for deployment
+      - name: Archive backend for deployment
         run: |
           cd backend
-          zip -r ../backend.zip .
+          tar --exclude='.pytest_cache' --exclude='.gitignore' --exclude='.env' -czf ../backend.tar.gz .
 
       - name: Deploy Backend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: backend.zip
+          package: backend.tar.gz
 
       - name: Build frontend
         run: |
           cd frontend
           npm install
           npm run build
-          cd dist
-          zip -r ../../frontend.zip .
+          tar -czf ../frontend.tar.gz -C dist .
 
       - name: Create $web container if it doesn't exist
         uses: azure/CLI@v1
         with:
           azcliversion: latest
           inlineScript: |
-            az storage container create --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --account-key ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }} --name '$web' --public-access blob || true
+            az storage container create --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --auth-mode login --name '$web' --public-access blob || true
 
       - name: Upload frontend to Azure Blob Storage
         uses: azure/CLI@v1
         with:
           azcliversion: latest
           inlineScript: |
-            az storage blob upload-batch --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --account-key ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }} --destination \$web --source frontend/dist --overwrite
+            az storage blob upload-batch --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} --auth-mode login --destination \$web --source frontend/dist --overwrite
