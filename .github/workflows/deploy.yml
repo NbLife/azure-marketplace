@@ -26,6 +26,13 @@ jobs:
           cd frontend
           npm install
           npm run build
+          ls -la
+          ls -la dist
+
+      - name: Debug - check frontend dist
+        run: |
+          echo "Checking if dist folder exists..."
+          [ -d frontend/dist ] && echo "dist folder exists" || echo "dist folder is missing"
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -47,5 +54,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "frontend"
-          api_location: "backend"
           output_location: "frontend/dist"
+          api_location: "backend"
