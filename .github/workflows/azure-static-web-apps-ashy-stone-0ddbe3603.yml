@@ -29,8 +29,11 @@ jobs:
         run: |
           cd frontend
           npm install
-          mkdir -p dist  # Tworzy folder, jeśli nie istnieje
-          npm run build -- --dist-dir dist  # Wymusza `dist/` w `frontend`
+          mkdir -p dist
+          npm run build -- --dist-dir dist
+
+      - name: Debug frontend build
+        run: ls -la frontend/dist
 
       - name: Set up Python
         uses: actions/setup-python@v4
