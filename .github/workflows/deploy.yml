@@ -25,6 +25,7 @@ jobs:
           cd frontend
           npm install
           npm run build
+          mkdir -p dist  # Upewnij się, że folder dist istnieje
           ls -la dist
 
       - name: Debug - check frontend dist
@@ -63,11 +64,17 @@ jobs:
         run: |
           cd backend
           python -m venv venv
-          source venv/bin/activate
+          source venv/bin/activate || . venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt || { echo "Error installing dependencies"; exit 1; }
-          if [ ! -f venv/bin/python ]; then echo "venv/bin/python is missing!"; exit 1; fi
-          ls -la venv/bin/
+          deactivate
+
+      - name: Debug - check venv existence
+        run: |
+          if [ ! -f backend/venv/bin/python ] && [ ! -f backend/venv/Scripts/python.exe ]; then 
+              echo "venv not created properly!"; 
+              exit 1; 
+          fi
 
       - name: Package Backend for Deployment
         run: |
