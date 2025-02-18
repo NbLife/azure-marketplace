@@ -12,8 +12,8 @@ async function fetchProducts() {
 }
 
 async function addProduct() {
-    const name = prompt("Podaj nazwę produktu:");
-    const price = prompt("Podaj cenę produktu:");
+    const name = prompt("Podaj nazwe produktu:");
+    const price = prompt("Podaj cene produktu:");
     if (!name || !price) return;
     await fetch("http://127.0.0.1:8000/items", {
         method: "POST",
