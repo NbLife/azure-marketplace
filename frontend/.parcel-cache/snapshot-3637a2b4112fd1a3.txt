@@ -1,6 +1,6 @@
 4200
 94C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\semver\internal\identifiers.js133843598933844380 0
-55C:\Users\timek\Desktop\Workingmarketplace\frontend\dist133844029095873725 1
+55C:\Users\timek\Desktop\Workingmarketplace\frontend\dist133844032500254103 1
 73C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\commander133843598933592595 1
 60C:\Users\timek\Desktop\Workingmarketplace\frontend\script.js133843217710543803 0
 114C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\posthtml\node_modules\htmlparser2\lib\Tokenizer.js133843598932162419 0
@@ -4194,8 +4194,8 @@
 91C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\.bin\update-browserslist-db133843598944759930 0
 95C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\.bin\update-browserslist-db.cmd133843598944759930 0
 95C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\.bin\update-browserslist-db.ps1133843598944759930 0
-74C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.bd18de2a.css133844029095780448 0
-78C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.bd18de2a.css.map133844029095840757 0
-73C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.f296d425.js133844029095780448 0
-77C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.f296d425.js.map133844029095840757 0
-66C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.html133844029095747640 0
+74C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.bd18de2a.css133844032500173599 0
+78C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.bd18de2a.css.map133844032500214018 0
+73C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.f296d425.js133844032500173599 0
+77C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.f296d425.js.map133844032500234101 0
+66C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.html133844032500136892 0
