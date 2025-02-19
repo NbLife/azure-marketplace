@@ -9,6 +9,9 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  COSMOS_DB_URL: ${{ secrets.COSMOS_DB_URL }}
+
 permissions:
   id-token: write
   contents: read
@@ -43,13 +46,25 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.8"  # Azure wymaga wersji 3.8
+          python-version: "3.8"
 
-      - name: Install backend dependencies (bez venv)
+      - name: Install backend dependencies (minimalizacja rozmiaru)
         run: |
           cd backend
           pip install --upgrade pip
+          sed -i '/tensorflow/d' requirements.txt  # Usunięcie TensorFlow
+          sed -i '/pytest/d' requirements.txt  # Usunięcie testów
+          sed -i '/flake8/d' requirements.txt  # Usunięcie lintera
+          sed -i '/seaborn/d' requirements.txt  # Usunięcie bibliotek do wykresów
           pip install -r requirements.txt
+
+      - name: Check API size before deployment
+        run: du -sh backend/ || true
+
+      - name: Clean up unnecessary files
+        run: |
+          cd backend
+          rm -rf __pycache__ .venv .git
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
@@ -59,4 +74,4 @@ jobs:
           action: "upload"
           app_location: "frontend/dist"
           api_location: "backend"
-          output_location: "dist"
+          output_location: "backend/"
