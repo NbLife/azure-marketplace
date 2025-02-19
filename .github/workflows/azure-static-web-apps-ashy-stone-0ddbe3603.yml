@@ -61,4 +61,4 @@ jobs:
           action: "upload"
           app_location: "frontend"
           api_location: "backend"
-          output_location: "frontend"  # Zmiana z "frontend/dist" na "frontend"
+          output_location: "frontend/dist"  # ✅ Poprawiona ścieżka
