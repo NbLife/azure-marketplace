@@ -32,7 +32,10 @@ jobs:
           npm run build
 
       - name: Debug frontend build
-        run: ls -la frontend/dist || echo "Brak katalogu dist!"
+        run: |
+          echo "Checking dist folder..."
+          ls -la frontend/dist || echo "Brak katalogu dist!"
+          [ -d frontend/dist ] || (echo "Błąd: frontend/dist nie istnieje!" && exit 1)
 
       - name: Set up Python
         uses: actions/setup-python@v4
