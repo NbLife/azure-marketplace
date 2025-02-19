@@ -4,10 +4,10 @@
   "description": "Frontend dla aplikacji marketplace",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html --dist-dir dist"
   },
   "devDependencies": {
-    "parcel": "^2.0.0"
+    "parcel": "^2.10.0"
   },
   "keywords": [],
   "author": "",
