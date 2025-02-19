@@ -23,7 +23,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 18.20.5
 
       - name: Install frontend dependencies
         run: |
@@ -33,9 +33,12 @@ jobs:
 
       - name: Debug frontend build
         run: |
-          echo "Checking dist folder..."
+          echo "Sprawdzam katalog frontend/dist..."
           ls -la frontend/dist || echo "Brak katalogu dist!"
           [ -d frontend/dist ] || (echo "Błąd: frontend/dist nie istnieje!" && exit 1)
+
+      - name: Fix permissions
+        run: chmod -R 755 frontend/dist
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -58,4 +61,4 @@ jobs:
           action: "upload"
           app_location: "frontend"
           api_location: "backend"
-          output_location: "frontend/dist"
+          output_location: "frontend"  # Zmiana z "frontend/dist" na "frontend"
