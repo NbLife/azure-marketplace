@@ -1,12 +1,12 @@
-4200
+4201
 94C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\semver\internal\identifiers.js133843598933844380 0
-55C:\Users\timek\Desktop\Workingmarketplace\frontend\dist133844029095873725 1
+55C:\Users\timek\Desktop\Workingmarketplace\frontend\dist133844027223583538 1
 73C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\commander133843598933592595 1
 60C:\Users\timek\Desktop\Workingmarketplace\frontend\script.js133843217710543803 0
 114C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\posthtml\node_modules\htmlparser2\lib\Tokenizer.js133843598932162419 0
 81C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\@msgpackr-extract133844027204502818 1
 84C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\type-fest\index.d.ts133843598933864387 0
-59C:\Users\timek\Desktop\Workingmarketplace\frontend\frontend133844030150286493 1
+59C:\Users\timek\Desktop\Workingmarketplace\frontend\frontend133844028209924338 1
 104C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\caniuse-lite\data\features\object-fit.js133843598941118995 0
 102C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\@parcel\core\test\EntryRequest.test.js133843598936040970 0
 97C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\lmdb\dependencies\lz4\lib\lz4hc.h133843598936847638 0
@@ -4194,8 +4194,9 @@
 91C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\.bin\update-browserslist-db133843598944759930 0
 95C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\.bin\update-browserslist-db.cmd133843598944759930 0
 95C:\Users\timek\Desktop\Workingmarketplace\frontend\node_modules\.bin\update-browserslist-db.ps1133843598944759930 0
-74C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.bd18de2a.css133844029095780448 0
-78C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.bd18de2a.css.map133844029095840757 0
-73C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.f296d425.js133844029095780448 0
-77C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.f296d425.js.map133844029095840757 0
-66C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.html133844029095747640 0
+64C:\Users\timek\Desktop\Workingmarketplace\frontend\frontend\dist133844028209924338 1
+74C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.bd18de2a.css133844027223427368 0
+78C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.bd18de2a.css.map133844027223578352 0
+73C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.f296d425.js133844027223432579 0
+77C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.f296d425.js.map133844027223573274 0
+66C:\Users\timek\Desktop\Workingmarketplace\frontend\dist\index.html133844027223411592 0

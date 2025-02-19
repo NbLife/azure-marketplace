@@ -6,8 +6,10 @@
     "start": "parcel index.html",
     "build": "parcel build index.html"
   },
-  "dependencies": {},
   "devDependencies": {
     "parcel": "^2.0.0"
-  }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

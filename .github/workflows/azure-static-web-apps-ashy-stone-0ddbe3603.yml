@@ -29,11 +29,10 @@ jobs:
         run: |
           cd frontend
           npm install
-          mkdir -p dist
-          npm run build -- --dist-dir dist
+          npm run build
 
       - name: Debug frontend build
-        run: ls -la frontend/dist
+        run: ls -la frontend/dist || echo "Brak katalogu dist!"
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -44,7 +43,7 @@ jobs:
         run: |
           cd backend
           python -m venv venv
-          source venv/bin/activate
+          source venv/bin/activate || venv\Scripts\activate
           pip install --upgrade pip
           pip install -r requirements.txt
 
