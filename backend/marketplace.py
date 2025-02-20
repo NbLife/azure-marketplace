@@ -1,76 +1,91 @@
+from fastapi import FastAPI, HTTPException, UploadFile, File
+from pydantic import BaseModel
+from typing import List, Optional
+from uuid import uuid4
+import shutil
 import os
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form
-from dotenv import load_dotenv
-from pymongo import MongoClient
-from azure.storage.blob import BlobServiceClient
-from pathlib import Path
-from starlette.middleware.cors import CORSMiddleware
 
-# Inicjalizacja aplikacji FastAPI
 app = FastAPI()
 
-# Wczytanie zmiennych środowiskowych
-env_path = Path(__file__).resolve().parent / ".env"
-load_dotenv(dotenv_path=env_path)
 
-# Pobranie zmiennych środowiskowych
-COSMOS_DB_URL = os.getenv("COSMOS_DB_URL")
-COSMOS_DB_NAME = os.getenv("COSMOS_DB_NAME")
-AZURE_STORAGE_CONN_STRING = os.getenv("AZURE_STORAGE_CONN_STRING")
-AZURE_BLOB_CONTAINER_NAME = os.getenv("AZURE_BLOB_CONTAINER_NAME")
-SECRET_KEY = os.getenv("SECRET_KEY")
+class User(BaseModel):
+    id: str
+    username: str
+    email: str
 
-# Konfiguracja CORS
-otpas = ["*"]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=otpas,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
-# Połączenie z CosmosDB
-try:
-    client = MongoClient(COSMOS_DB_URL)
-    db = client[COSMOS_DB_NAME]
-    products_collection = db["products"]
-    print("Połączono z bazą CosmosDB")
-except Exception as e:
-    print(f"Błąd połączenia z CosmosDB: {str(e)}")
-    raise HTTPException(status_code=500, detail="Błąd połączenia z bazą danych")
+class Product(BaseModel):
+    id: str
+    name: str
+    description: str
+    price: float
+    owner_id: str
+    image_url: Optional[str] = None
 
-# Połączenie z Azure Blob Storage
-try:
-    blob_service_client = BlobServiceClient.from_connection_string(AZURE_STORAGE_CONN_STRING)
-    container_client = blob_service_client.get_container_client(AZURE_BLOB_CONTAINER_NAME)
-    print("Połączono z Azure Blob Storage")
-except Exception as e:
-    print(f"Błąd połączenia z Azure Blob Storage: {str(e)}")
-    raise HTTPException(status_code=500, detail="Błąd połączenia z Azure Storage")
+
+users_db = []
+products_db = []
+
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 
 @app.get("/")
-def home():
-    return {"message": "Marketplace API działa!"}
+def root():
+    return {"message": "Welcome to the Marketplace API"}
 
-@app.get("/api/status")
-def status():
-    return {"status": "OK"}
 
-@app.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
-    try:
-        blob_client = container_client.get_blob_client(file.filename)
-        blob_client.upload_blob(file.file.read(), overwrite=True)
-        return {"message": "Plik przesłany pomyślnie!", "file": file.filename}
-    except Exception as e:
-        return {"error": str(e)}
+@app.post("/register", response_model=User)
+def register_user(username: str, email: str):
+    user = User(id=str(uuid4()), username=username, email=email)
+    users_db.append(user)
+    return user
 
-@app.post("/items")
-async def create_item(name: str = Form(...), price: float = Form(...)):
-    try:
-        product = {"name": name, "price": price}
-        products_collection.insert_one(product)
-        return {"message": "Produkt dodany!", "product": product}
-    except Exception as e:
-        return {"error": str(e)}
+
+@app.post("/add_product", response_model=Product)
+def add_product(name: str, description: str, price: float, owner_id: str):
+    if not any(user.id == owner_id for user in users_db):
+        raise HTTPException(status_code=404, detail="User not found")
+
+    product = Product(
+        id=str(uuid4()),
+        name=name,
+        description=description,
+        price=price,
+        owner_id=owner_id
+    )
+    products_db.append(product)
+    return product
+
+
+@app.get("/products", response_model=List[Product])
+def get_products():
+    return products_db
+
+
+@app.get("/product/{product_id}", response_model=Product)
+def get_product(product_id: str):
+    for product in products_db:
+        if product.id == product_id:
+            return product
+    raise HTTPException(status_code=404, detail="Product not found")
+
+
+@app.get("/search")
+def search_products(query: str):
+    results = [product for product in products_db if query.lower()
+               in product.name.lower()]
+    return results
+
+
+@app.post("/upload_image/{product_id}")
+def upload_image(product_id: str, file: UploadFile = File(...)):
+    for product in products_db:
+        if product.id == product_id:
+            file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+            product.image_url = file_path
+            return {"filename": file.filename, "url": file_path}
+
+    raise HTTPException(status_code=404, detail="Product not found")
